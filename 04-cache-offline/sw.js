@@ -1,19 +1,40 @@
 // Service Worker
-const CACHE_NAME = "cache-1";
+// const CACHE_NAME = "cache-1";
+const CACHE_STATIC_NAME = "static-v2";
+const CACHE_DYNAMIC_NAME = "dynamic-v1";
+const CACHE_DYNAMIC_ITEMS = 5;
+const CACHE_INMUTABLE_NAME = "inmutable-v1";
+
+const limpiarCache = (cacheName, numberOfItems) => {
+  caches.open(cacheName).then((cache) => {
+    return cache.keys().then((keys) => {
+      if (keys.length > numberOfItems) {
+        cache.delete(keys[0]).then(limpiarCache(cacheName, numberOfItems));
+      }
+    });
+  });
+};
 
 self.addEventListener("install", (event) => {
-  const cachePromise = caches.open(CACHE_NAME).then((cache) => {
+  const cachePromise = caches.open(CACHE_STATIC_NAME).then((cache) => {
     return cache.addAll([
       "/",
       "/index.html",
       "/css/style.css",
       "/img/main.jpg",
-      "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css",
       "/js/app.js",
     ]);
   });
 
-  event.waitUntil(cachePromise);
+  const cacheInmutablePromise = caches
+    .open(CACHE_INMUTABLE_NAME)
+    .then((cache) => {
+      return cache.addAll([
+        "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css",
+      ]);
+    });
+
+  event.waitUntil(Promise.all([cachePromise, cacheInmutablePromise]));
 });
 
 self.addEventListener("fetch", (event) => {
@@ -26,8 +47,9 @@ self.addEventListener("fetch", (event) => {
 
     // No existe -> Network Fallback
     return fetch(event.request).then((newRes) => {
-      caches.open(CACHE_NAME).then((cache) => {
+      caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
         cache.put(event.request, newRes);
+        limpiarCache(CACHE_DYNAMIC_NAME, CACHE_DYNAMIC_ITEMS);
       });
       return newRes.clone();
     });
