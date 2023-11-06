@@ -57,20 +57,29 @@ self.addEventListener("fetch", (event) => {
 
   // event.respondWith(response);
 
-  // 3 - Network first with cache fallback
-  const response = fetch(event.request)
-    .then((newRes) => {
-      if (!newRes) return caches.match(event.request);
+  // // 3 - Network first with cache fallback
+  // const response = fetch(event.request)
+  //   .then((newRes) => {
+  //     if (!newRes) return caches.match(event.request);
 
-      caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
-        cache.put(event.request, newRes);
-        limpiarCache(CACHE_DYNAMIC_NAME, CACHE_DYNAMIC_LIMIT);
-      });
-      return newRes.clone();
-    })
-    .catch((err) => {
-      return caches.match(event.request);
-    });
+  //     caches.open(CACHE_DYNAMIC_NAME).then((cache) => {
+  //       cache.put(event.request, newRes);
+  //       limpiarCache(CACHE_DYNAMIC_NAME, CACHE_DYNAMIC_LIMIT);
+  //     });
+  //     return newRes.clone();
+  //   })
+  //   .catch((err) => {
+  //     return caches.match(event.request);
+  //   });
 
+  // event.respondWith(response);
+
+  // 4 - Cache with network update
+  // Rendimiento critico
+  // Actualizacion siempre un paso atras
+  const response = caches.open(CACHE_STATIC_NAME).then((cache) => {
+    fetch(event.request).then((newRes) => cache.put(event.request, newRes) )
+    return caches.match(event.request);
+  });
   event.respondWith(response);
 });
