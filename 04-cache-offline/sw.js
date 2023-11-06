@@ -22,6 +22,7 @@ self.addEventListener("install", (event) => {
       "/index.html",
       "/css/style.css",
       "/img/main.jpg",
+      "/img/no-img.jpg",
       "/js/app.js",
     ]);
   });
@@ -74,12 +75,39 @@ self.addEventListener("fetch", (event) => {
 
   // event.respondWith(response);
 
-  // 4 - Cache with network update
-  // Rendimiento critico
-  // Actualizacion siempre un paso atras
-  const response = caches.open(CACHE_STATIC_NAME).then((cache) => {
-    fetch(event.request).then((newRes) => cache.put(event.request, newRes) )
-    return caches.match(event.request);
+  // // 4 - Cache with network update
+  // // Rendimiento critico
+  // // Actualizacion siempre un paso atras
+  // const response = caches.open(CACHE_STATIC_NAME).then((cache) => {
+  //   fetch(event.request).then((newRes) => cache.put(event.request, newRes) )
+  //   return caches.match(event.request);
+  // });
+  // event.respondWith(response);
+
+  // 5 - Cache & network Race
+  const response = new Promise((resolve, reject) => {
+    let rejected = false;
+
+    const failOnce = () => {
+      if (rejected) {
+        if (/\.(png|jpg)$/i.test(event.request.url)) {
+          resolve(caches.match("/img/no-img.jpg"));
+        } else reject("Not Found");
+      } else rejected = true;
+    };
+
+    fetch(event.request)
+      .then((res) => {
+        res.ok ? resolve(res) : failOnce();
+      })
+      .catch(failOnce);
+
+    caches
+      .match(event.request)
+      .then((res) => {
+        res ? resolve(res) : failOnce();
+      })
+      .catch(failOnce);
   });
   event.respondWith(response);
 });
