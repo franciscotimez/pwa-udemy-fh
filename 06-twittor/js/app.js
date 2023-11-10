@@ -1,5 +1,11 @@
+let url = window.location.href;
+
+let swLocation = url.includes("localhost")
+  ? "/sw.js"
+  : "/pwa-udemy-fh/06-twittor/sw.js";
+
 if (navigator.serviceWorker) {
-  navigator.serviceWorker.register("/sw.js");
+  navigator.serviceWorker.register(swLocation);
 }
 
 // Referencias de jQuery
