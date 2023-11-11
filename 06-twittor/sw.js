@@ -46,6 +46,7 @@ self.addEventListener("activate", (event) => {
   const cleanerCache = caches.keys().then((keys) => {
     keys.forEach((key) => {
       if (key !== STATIC_CACHE && key.includes("static-v")) caches.delete(key);
+      if (key !== DYNAMIC_CACHE && key.includes("dynamic-v")) caches.delete(key);
     });
   });
   event.waitUntil(cleanerCache);
