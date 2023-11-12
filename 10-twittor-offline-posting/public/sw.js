@@ -83,8 +83,9 @@ self.addEventListener('fetch', event => {
 self.addEventListener('sync', event => {
     console.log("SW: Sync")
 
-    if(event.tag === "nuevo-post"){
-
-        event.waitUntil()
+    if (event.tag === "nuevo-post") {
+        // Postear mensajes cuando vuelve la conexion
+        const respuesta = postearMensajes()
+        event.waitUntil(respuesta)
     }
 })
