@@ -4,7 +4,7 @@ importScripts('https://cdn.jsdelivr.net/npm/pouchdb@7.0.0/dist/pouchdb.min.js');
 importScripts('js/sw-db.js');
 importScripts('js/sw-utils.js');
 
-const STATIC_CACHE = 'static-v1';
+const STATIC_CACHE = 'static-v2';
 const DYNAMIC_CACHE = 'dynamic-v1';
 const INMUTABLE_CACHE = 'inmutable-v1';
 
@@ -62,7 +62,7 @@ self.addEventListener('fetch', event => {
     let respuesta
 
     if (event.request.url.includes("/api")) {
-        return manejoApiMensajes(DYNAMIC_CACHE, event.request)
+        respuesta = manejoApiMensajes(DYNAMIC_CACHE, event.request)
     }
     else {
         respuesta = caches.match(event.request).then(res => {
@@ -78,3 +78,13 @@ self.addEventListener('fetch', event => {
     }
     event.respondWith(respuesta);
 });
+
+// Tareas Asincronas
+self.addEventListener('sync', event => {
+    console.log("SW: Sync")
+
+    if(event.tag === "nuevo-post"){
+
+        event.waitUntil()
+    }
+})
