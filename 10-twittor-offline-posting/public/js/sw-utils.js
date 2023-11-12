@@ -27,16 +27,27 @@ function actualizaCacheStatico(staticCache, req, APP_SHELL_INMUTABLE) {
 
 // Network with cache fallback / update
 function manejoApiMensajes(cacheName, req) {
-    return fetch(req)
-        .then(res => {
-            if (res.ok) {
-                actualizaCacheDinamico(cacheName, req, res.clone());
-                return res.clone()
-            } else {
-                return caches.match(req)
-            }
+
+    if (req.clone().method === "POST") {
+        // Post de nuevo mensaje
+        req.clone().text().then(body => {
+            const bodyObj = JSON.parse(body)
+            guardarMensaje(bodyObj)
         })
-        .catch(err => {
-            return caches.match(req)
-        });
+        return fetch(req)
+    }
+    else {
+        return fetch(req)
+            .then(res => {
+                if (res.ok) {
+                    actualizaCacheDinamico(cacheName, req, res.clone());
+                    return res.clone()
+                } else {
+                    return caches.match(req)
+                }
+            })
+            .catch(err => {
+                return caches.match(req)
+            });
+    }
 }
