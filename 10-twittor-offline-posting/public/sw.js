@@ -52,16 +52,23 @@ self.addEventListener('activate', e => {
     e.waitUntil(respuesta);
 });
 
-self.addEventListener('fetch', e => {
-    const respuesta = caches.match(e.request).then(res => {
-        if (res) {
-            actualizaCacheStatico(STATIC_CACHE, e.request, APP_SHELL_INMUTABLE);
-            return res;
-        } else {
-            return fetch(e.request).then(newRes => {
-                return actualizaCacheDinamico(DYNAMIC_CACHE, e.request, newRes);
-            });
-        }
-    });
-    e.respondWith(respuesta);
+self.addEventListener('fetch', event => {
+    let respuesta
+
+    if (event.request.url.includes("/api")) {
+        return manejoApiMensajes(DYNAMIC_CACHE, event.request)
+    }
+    else {
+        respuesta = caches.match(event.request).then(res => {
+            if (res) {
+                actualizaCacheStatico(STATIC_CACHE, event.request, APP_SHELL_INMUTABLE);
+                return res;
+            } else {
+                return fetch(event.request).then(newRes => {
+                    return actualizaCacheDinamico(DYNAMIC_CACHE, event.request, newRes);
+                });
+            }
+        });
+    }
+    event.respondWith(respuesta);
 });
