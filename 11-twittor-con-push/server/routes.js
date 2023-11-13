@@ -33,4 +33,31 @@ router.post('/', function (req, res) {
   });
 });
 
+// Notificaciones
+// Almacenar subscripcion
+router.post('/subscribe', function (req, res) {
+
+  res.json({
+    ok: true,
+  });
+});
+
+// Obtener key publico
+router.get('/key', function (req, res) {
+
+  res.json({
+    ok: true,
+  });
+});
+
+// Enviar notificaciones Push
+// SOLO se controla desde el backend
+router.post('/push', function (req, res) {
+
+  res.json({
+    ok: true,
+  });
+});
+
+
 module.exports = router;
