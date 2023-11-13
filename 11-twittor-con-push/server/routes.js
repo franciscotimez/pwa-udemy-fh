@@ -37,11 +37,10 @@ router.post("/", function (req, res) {
 // Notificaciones
 // Almacenar subscripcion
 router.post("/subscribe", function (req, res) {
-
-  const suscripcion = req.body
+  const suscripcion = req.body;
   console.log(suscripcion);
 
-  push.addSubscription(suscripcion)
+  push.addSubscription(suscripcion);
 
   res.json({
     ok: true,
@@ -57,8 +56,17 @@ router.get("/key", function (req, res) {
 // Enviar notificaciones Push
 // SOLO se controla desde el backend
 router.post("/push", function (req, res) {
+  const notificacion = {
+    titulo: req.body.titulo,
+    cuerpo: req.body.cuerpo,
+    usuario: req.body.usuario,
+  };
+
+  push.sendPush(notificacion);
+  
   res.json({
     ok: true,
+    notificacion,
   });
 });
 
