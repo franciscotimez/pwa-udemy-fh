@@ -1,11 +1,20 @@
 var url = window.location.href;
 var swLocation = "/twittor/sw.js";
 
+let swRegister;
+
 if (navigator.serviceWorker) {
   if (url.includes("localhost")) {
     swLocation = "/sw.js";
   }
-  navigator.serviceWorker.register(swLocation);
+
+  // Espero a que termine de cargar la pagina para registrar el SW
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register(swLocation).then((reg) => {
+      swRegister = reg;
+      swRegister.pushManager.getSubscription().then(verificaSuscripcion);
+    });
+  });
 }
 
 // Referencias de jQuery
@@ -183,7 +192,6 @@ function verificaSuscripcion(activadas) {
     btnActivadas.addClass("oculto");
   }
 }
-verificaSuscripcion();
 
 function enviarNotificacion() {
   const notificationsOpts = {
@@ -225,16 +233,34 @@ function notificarme() {
 // notificarme()
 
 // Get Key
-function getPublicKey(){
+function getPublicKey() {
   // fetch("api/key")
   // .then(res => res.text())
   // .then(console.log)
 
-  return fetch("api/key")
-  .then(res => res.arrayBuffer())
-  // retornar arreglo, pero cmo Uint8array
-  .then(key => new Uint8Array(key))
-
+  return (
+    fetch("api/key")
+      .then((res) => res.arrayBuffer())
+      // retornar arreglo, pero cmo Uint8array
+      .then((key) => new Uint8Array(key))
+  );
 }
 
-getPublicKey().then(console.log)
+// getPublicKey().then(console.log);
+
+btnDesactivadas.on("click", () => {
+  if (!swRegister) return console.log("No hay ServiceWorker.");
+
+  getPublicKey().then((key) => {
+    swRegister.pushManager
+      .subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: key,
+      })
+      .then((res) => res.toJSON())
+      .then((subscripcion) => {
+        console.log(subscripcion);
+        verificaSuscripcion(subscripcion);
+      });
+  });
+});
