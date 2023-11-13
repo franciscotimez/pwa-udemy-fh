@@ -1,26 +1,26 @@
 // Routes.js - Módulo de rutas
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
 const mensajes = [
   {
-    _id: 'XXX',
-    user: 'spiderman',
-    mensaje: 'Hola Mundo'
-  }
+    _id: "XXX",
+    user: "spiderman",
+    mensaje: "Hola Mundo",
+  },
 ];
 
 // Get mensajes
-router.get('/', function (req, res) {
+router.get("/", function (req, res) {
   // res.json('Obteniendo mensajes');
   res.json(mensajes);
 });
 
 // Post mensaje
-router.post('/', function (req, res) {
+router.post("/", function (req, res) {
   const mensaje = {
     mensaje: req.body.mensaje,
-    user: req.body.user
+    user: req.body.user,
   };
 
   mensajes.push(mensaje);
@@ -29,22 +29,20 @@ router.post('/', function (req, res) {
 
   res.json({
     ok: true,
-    mensaje
+    mensaje,
   });
 });
 
 // Notificaciones
 // Almacenar subscripcion
-router.post('/subscribe', function (req, res) {
-
+router.post("/subscribe", function (req, res) {
   res.json({
     ok: true,
   });
 });
 
 // Obtener key publico
-router.get('/key', function (req, res) {
-
+router.get("/key", function (req, res) {
   res.json({
     ok: true,
   });
@@ -52,12 +50,10 @@ router.get('/key', function (req, res) {
 
 // Enviar notificaciones Push
 // SOLO se controla desde el backend
-router.post('/push', function (req, res) {
-
+router.post("/push", function (req, res) {
   res.json({
     ok: true,
   });
 });
-
 
 module.exports = router;
