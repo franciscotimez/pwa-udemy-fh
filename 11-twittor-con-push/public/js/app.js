@@ -170,3 +170,36 @@ window.addEventListener('offline', isOnline);
 
 isOnline();
 
+// Notificaciones
+function enviarNotificacion() {
+    const notificationsOpts = {
+        body: "",
+        icon: "img/icons/icon-72x72.png"
+    }
+    const noti = new Notification("Hola mundo! - Granted desde pregunta", notificationsOpts)
+    noti.onclick = () => {
+        console.log("Click!");
+    }
+}
+
+function notificarme() {
+    if (!window.Notification) {
+        console.log("Este navegador no soporta notificaciones")
+        return
+    }
+
+    if (Notification.permission === "granted") {
+        // new Notification("Hola mundo! - Granted")
+        enviarNotificacion()
+    } else if (Notification.permission !== "denied" || Notification.permission === "default") {
+        Notification.requestPermission((permission) => {
+            console.log(permission);
+            if (permission === "granted") {
+                // new Notification("Hola mundo! - Granted desde pregunta")
+                enviarNotificacion()
+            }
+        })
+    }
+}
+
+notificarme()
