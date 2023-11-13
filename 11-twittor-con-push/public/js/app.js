@@ -185,7 +185,7 @@ isOnline();
 // Notificaciones
 function verificaSuscripcion(activadas) {
   console.log(activadas);
-  
+
   if (activadas) {
     btnActivadas.removeClass("oculto");
     btnDesactivadas.addClass("oculto");
@@ -272,7 +272,20 @@ btnDesactivadas.on("click", () => {
           body: JSON.stringify(subscripcion),
         })
           .then(verificaSuscripcion)
-          .catch(console.log);
+          .catch(cancelarSuscripcion);
       });
   });
+});
+
+function cancelarSuscripcion() {
+  swRegister.pushManager.getSubscription().then((subscripcion) => {
+    console.log("Subscription Data: ",subscripcion);
+    // subscripcion.unsubscribe().then(() => verificaSuscripcion(false));
+    if (subscripcion) subscripcion.unsubscribe().then(console.log);
+  });
+}
+
+btnActivadas.on("click", () => {
+  if (!swRegister) return console.log("No hay ServiceWorker.");
+  cancelarSuscripcion();
 });
