@@ -3,59 +3,45 @@ var url = window.location.href;
 var swLocation = '/twittor/sw.js';
 
 
-if ( navigator.serviceWorker ) {
-
-
-    if ( url.includes('localhost') ) {
+if (navigator.serviceWorker) {
+    if (url.includes('localhost')) {
         swLocation = '/sw.js';
     }
-
-
-    navigator.serviceWorker.register( swLocation );
+    navigator.serviceWorker.register(swLocation);
 }
 
-
-
-
-
 // Referencias de jQuery
-
-var titulo      = $('#titulo');
-var nuevoBtn    = $('#nuevo-btn');
-var salirBtn    = $('#salir-btn');
+var titulo = $('#titulo');
+var nuevoBtn = $('#nuevo-btn');
+var salirBtn = $('#salir-btn');
 var cancelarBtn = $('#cancel-btn');
-var postBtn     = $('#post-btn');
-var avatarSel   = $('#seleccion');
-var timeline    = $('#timeline');
+var postBtn = $('#post-btn');
+var avatarSel = $('#seleccion');
+var timeline = $('#timeline');
 
-var modal       = $('#modal');
+var modal = $('#modal');
 var modalAvatar = $('#modal-avatar');
-var avatarBtns  = $('.seleccion-avatar');
-var txtMensaje  = $('#txtMensaje');
+var avatarBtns = $('.seleccion-avatar');
+var txtMensaje = $('#txtMensaje');
 
-var btnActivadas    = $('.btn-noti-activadas');
+var btnActivadas = $('.btn-noti-activadas');
 var btnDesactivadas = $('.btn-noti-desactivadas');
 
 // El usuario, contiene el ID del hÃ©roe seleccionado
 var usuario;
 
-
-
-
 // ===== Codigo de la aplicación
-
 function crearMensajeHTML(mensaje, personaje) {
-
-    var content =`
+    var content = `
     <li class="animated fadeIn fast">
         <div class="avatar">
-            <img src="img/avatars/${ personaje }.jpg">
+            <img src="img/avatars/${personaje}.jpg">
         </div>
         <div class="bubble-container">
             <div class="bubble">
-                <h3>@${ personaje }</h3>
+                <h3>@${personaje}</h3>
                 <br/>
-                ${ mensaje }
+                ${mensaje}
             </div>
             
             <div class="arrow"></div>
@@ -65,15 +51,11 @@ function crearMensajeHTML(mensaje, personaje) {
 
     timeline.prepend(content);
     cancelarBtn.click();
-
 }
 
-
-
 // Globals
-function logIn( ingreso ) {
-
-    if ( ingreso ) {
+function logIn(ingreso) {
+    if (ingreso) {
         nuevoBtn.removeClass('oculto');
         salirBtn.removeClass('oculto');
         timeline.removeClass('oculto');
@@ -86,114 +68,86 @@ function logIn( ingreso ) {
         avatarSel.removeClass('oculto');
 
         titulo.text('Seleccione Personaje');
-    
     }
-
 }
 
-
 // Seleccion de personaje
-avatarBtns.on('click', function() {
-
+avatarBtns.on('click', function () {
     usuario = $(this).data('user');
-
     titulo.text('@' + usuario);
-
     logIn(true);
-
 });
 
 // Boton de salir
-salirBtn.on('click', function() {
-
+salirBtn.on('click', function () {
     logIn(false);
-
 });
 
 // Boton de nuevo mensaje
-nuevoBtn.on('click', function() {
-
+nuevoBtn.on('click', function () {
     modal.removeClass('oculto');
-    modal.animate({ 
+    modal.animate({
         marginTop: '-=1000px',
         opacity: 1
-    }, 200 );
-
+    }, 200);
 });
 
-
 // Boton de cancelar mensaje
-cancelarBtn.on('click', function() {
-    if ( !modal.hasClass('oculto') ) {
-        modal.animate({ 
+cancelarBtn.on('click', function () {
+    if (!modal.hasClass('oculto')) {
+        modal.animate({
             marginTop: '+=1000px',
             opacity: 0
-         }, 200, function() {
-             modal.addClass('oculto');
-             txtMensaje.val('');
-         });
+        }, 200, function () {
+            modal.addClass('oculto');
+            txtMensaje.val('');
+        });
     }
 });
 
 // Boton de enviar mensaje
-postBtn.on('click', function() {
-
+postBtn.on('click', function () {
     var mensaje = txtMensaje.val();
-    if ( mensaje.length === 0 ) {
+    if (mensaje.length === 0) {
         cancelarBtn.click();
         return;
     }
-
     var data = {
         mensaje: mensaje,
         user: usuario
     };
-
 
     fetch('api', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify( data )
+        body: JSON.stringify(data)
     })
-    .then( res => res.json() )
-    .then( res => console.log( 'app.js', res ))
-    .catch( err => console.log( 'app.js error:', err ));
+        .then(res => res.json())
+        .then(res => console.log('app.js', res))
+        .catch(err => console.log('app.js error:', err));
 
-
-
-    crearMensajeHTML( mensaje, usuario );
-
+    crearMensajeHTML(mensaje, usuario);
 });
-
 
 
 // Obtener mensajes del servidor
 function getMensajes() {
-
     fetch('api')
-        .then( res => res.json() )
-        .then( posts => {
-
+        .then(res => res.json())
+        .then(posts => {
             console.log(posts);
-            posts.forEach( post =>
-                crearMensajeHTML( post.mensaje, post.user ));
-
-
+            posts.forEach(post =>
+                crearMensajeHTML(post.mensaje, post.user));
         });
-
-
 }
 
 getMensajes();
 
-
-
 // Detectar cambios de conexión
 function isOnline() {
-
-    if ( navigator.onLine ) {
+    if (navigator.onLine) {
         // tenemos conexión
         // console.log('online');
         $.mdtoast('Online', {
@@ -201,9 +155,7 @@ function isOnline() {
             interactionTimeout: 1000,
             actionText: 'OK!'
         });
-
-
-    } else{
+    } else {
         // No tenemos conexión
         $.mdtoast('Offline', {
             interaction: true,
@@ -211,11 +163,10 @@ function isOnline() {
             type: 'warning'
         });
     }
-
 }
 
-window.addEventListener('online', isOnline );
-window.addEventListener('offline', isOnline );
+window.addEventListener('online', isOnline);
+window.addEventListener('offline', isOnline);
 
 isOnline();
 
