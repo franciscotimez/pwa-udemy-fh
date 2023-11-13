@@ -109,7 +109,7 @@ self.addEventListener("push", (event) => {
     // icon: "img/icons/icon-72x72.png"
     icon: `img/avatars/${data.usuario}.jpg`,
     badge: "img/favicon.ico",
-    // image: "",
+    image: "https://www.hiberus.com/crecemos-contigo/wp-content/uploads/2021/03/16-9-300x169.jpg", // Imagen grande en notificaciones ratio 4:3 -> 1350px de ancho -> 1350px x 1013px
     // vibrate: [500,110,500,110,450,110,200,110,170,40,450,110,200,110,170,40,500], Deprecado en android 8 y posterior
     openUrl: "/",
     data: {
