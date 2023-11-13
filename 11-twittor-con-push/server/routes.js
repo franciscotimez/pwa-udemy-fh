@@ -56,17 +56,17 @@ router.get("/key", function (req, res) {
 // Enviar notificaciones Push
 // SOLO se controla desde el backend
 router.post("/push", function (req, res) {
-  const notificacion = {
+  const post = {
     titulo: req.body.titulo,
     cuerpo: req.body.cuerpo,
     usuario: req.body.usuario,
   };
 
-  push.sendPush(notificacion);
+  push.sendPush(post);
   
   res.json({
     ok: true,
-    notificacion,
+    post,
   });
 });
 

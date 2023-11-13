@@ -96,12 +96,51 @@ self.addEventListener("sync", (e) => {
 });
 
 // Escuchar push
+// https://gearside.com/custom-vibration-patterns-mobile-devices/
 self.addEventListener("push", (event) => {
   // console.log(event)
-  console.log(event.data.text());
 
-  const title = event.data.text();
-  const options = {};
+  const data = JSON.parse(event.data.text());
+  console.log(data);
+
+  const title = data.titulo;
+  const options = {
+    body: data.cuerpo,
+    // icon: "img/icons/icon-72x72.png"
+    icon: `img/avatars/${data.usuario}.jpg`,
+    badge: "img/favicon.ico",
+    // image: "",
+    // vibrate: [500,110,500,110,450,110,200,110,170,40,450,110,200,110,170,40,500], Deprecado en android 8 y posterior
+    openUrl: "/",
+    data: {
+      url: "http://google.com",
+      id: data.usuario,
+    },
+    actions: [
+      {
+        action: "thor-action",
+        title: "Thor",
+        icon: "img/avatar/thor.jpg",
+      },
+      {
+        action: "ironman-action",
+        title: "Ironman",
+        icon: "img/avatar/ironman.jpg",
+      },
+    ],
+  };
 
   event.waitUntil(self.registration.showNotification(title, options));
+});
+
+// Notification close
+self.addEventListener("notificationclose", (event) => {
+  console.log(event);
+});
+
+self.addEventListener("notificationclick", (event) => {
+  const { notification, action } = event;
+  console.log({ notification, action });
+
+  notification.close();
 });

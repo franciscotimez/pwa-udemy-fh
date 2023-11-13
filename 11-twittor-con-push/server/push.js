@@ -23,8 +23,9 @@ module.exports.addSubscription = (suscripcion) => {
   console.log(suscripciones);
 };
 
+// https://web.dev/articles/push-notifications-display-a-notification?hl=es-419
 module.exports.sendPush = (post) => {
   suscripciones.forEach((suscripcion, i) => {
-    webpush.sendNotification(suscripcion, post.titulo);
+    webpush.sendNotification(suscripcion, JSON.stringify(post));
   });
 };
