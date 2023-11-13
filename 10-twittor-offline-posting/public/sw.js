@@ -21,7 +21,9 @@ const APP_SHELL = [
     'img/avatars/wolverine.jpg',
     'js/app.js',
     'js/sw-db.js',
-    'js/sw-utils.js'
+    'js/sw-utils.js',
+    "js/libs/plugins/mdtoast.min.js",
+    "js/libs/plugins/mdtoast.min.css"
 ];
 
 const APP_SHELL_INMUTABLE = [
