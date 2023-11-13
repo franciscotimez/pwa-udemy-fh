@@ -113,7 +113,8 @@ self.addEventListener("push", (event) => {
     // vibrate: [500,110,500,110,450,110,200,110,170,40,450,110,200,110,170,40,500], Deprecado en android 8 y posterior
     openUrl: "/",
     data: {
-      url: "http://google.com",
+      // url: "http://google.com",
+      url: "/",
       id: data.usuario,
     },
     actions: [
@@ -142,5 +143,20 @@ self.addEventListener("notificationclick", (event) => {
   const { notification, action } = event;
   console.log({ notification, action });
 
-  notification.close();
+  const respuesta = clients.matchAll().then((clients) => {
+    let cliente = clients.find((c) => {
+      return c.visibilityState === "visible";
+    });
+
+    if (cliente) {
+      cliente.navigate(notification.data.url);
+      cliente.focus();
+    } else {
+      clients.openWindow(notification.data.url); // Abre una nueva ventana
+    }
+
+    return notification.close();
+  });
+
+  event.waitUntil(respuesta);
 });
