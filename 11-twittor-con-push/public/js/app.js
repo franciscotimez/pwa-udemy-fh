@@ -171,6 +171,17 @@ window.addEventListener('offline', isOnline);
 isOnline();
 
 // Notificaciones
+function verificaSuscripcion(activadas) {
+    if (activadas) {
+        btnActivadas.removeClass("oculto")
+        btnDesactivadas.addClass("oculto")
+    } else {
+        btnDesactivadas.removeClass("oculto")
+        btnActivadas.addClass("oculto")
+    }
+}
+verificaSuscripcion()
+
 function enviarNotificacion() {
     const notificationsOpts = {
         body: "",
@@ -202,4 +213,4 @@ function notificarme() {
     }
 }
 
-notificarme()
+// notificarme()
