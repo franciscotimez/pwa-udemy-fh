@@ -37,6 +37,12 @@ router.post("/", function (req, res) {
 // Notificaciones
 // Almacenar subscripcion
 router.post("/subscribe", function (req, res) {
+
+  const suscripcion = req.body
+  console.log(suscripcion);
+
+  push.addSubscription(suscripcion)
+
   res.json({
     ok: true,
   });
